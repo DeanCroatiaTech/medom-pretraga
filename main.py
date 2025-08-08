@@ -162,6 +162,29 @@ header {visibility: hidden;}
 /* Spinner styling */
 .stSpinner > div {
     border-color: #000000 !important;
+    border-width: 3px !important;
+    width: 40px !important;
+    height: 40px !important;
+}
+
+/* Custom spinner container */
+.stSpinner {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    padding: 20px !important;
+    background: rgba(255, 255, 255, 0.9) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1) !important;
+    margin: 20px 0 !important;
+}
+
+/* Spinner text styling */
+.stSpinner > div + div {
+    color: #000000 !important;
+    font-weight: 600 !important;
+    font-size: 16px !important;
+    margin-top: 10px !important;
 }
 
 /* Responsive design */
@@ -281,27 +304,62 @@ if (prompt and not st.session_state.get("clear_input", False)) or submit_button:
     current_prompt = prompt if prompt else st.session_state.get("current_prompt", "")
 
     if current_prompt and not st.session_state.get("clear_input", False):
-        with st.spinner("Razmišljam..."):
-            generated_response = run_llm(
-                query=current_prompt, chat_history=st.session_state["chat_history"]
-            )
-            sources = set(
-                [doc.metadata["source"] for doc in generated_response["source_documents"]]
-            )
+        # Show custom loading indicator for mobile
+        st.markdown("""
+        <div style="
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            margin: 20px 0;
+            border: 2px solid #000000;
+        ">
+            <div style="
+                width: 40px;
+                height: 40px;
+                border: 4px solid #f3f3f3;
+                border-top: 4px solid #000000;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+                margin-right: 15px;
+            "></div>
+            <div style="
+                color: #000000;
+                font-weight: 600;
+                font-size: 18px;
+            ">Razmišljam...</div>
+        </div>
+        <style>
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        </style>
+        """, unsafe_allow_html=True)
 
-            formatted_response = (
-                f"{generated_response['result']}{create_individual_sources_string(sources)}"
-            )
+        generated_response = run_llm(
+            query=current_prompt, chat_history=st.session_state["chat_history"]
+        )
+        sources = set(
+            [doc.metadata["source"] for doc in generated_response["source_documents"]]
+        )
 
-            st.session_state["user_prompt_history"].append(current_prompt)
-            st.session_state["chat_answers_history"].append(formatted_response)
-            st.session_state["chat_history"].append(("human", current_prompt))
-            st.session_state["chat_history"].append(("ai", generated_response["result"]))
+        formatted_response = (
+            f"{generated_response['result']}{create_individual_sources_string(sources)}"
+        )
 
-        # Clear the input by incrementing the counter
-        st.session_state["input_counter"] = st.session_state.get("input_counter", 0) + 1
-        st.session_state["clear_input"] = True
-        st.rerun()
+        st.session_state["user_prompt_history"].append(current_prompt)
+        st.session_state["chat_answers_history"].append(formatted_response)
+        st.session_state["chat_history"].append(("human", current_prompt))
+        st.session_state["chat_history"].append(("ai", generated_response["result"]))
+
+    # Clear the input by incrementing the counter
+    st.session_state["input_counter"] = st.session_state.get("input_counter", 0) + 1
+    st.session_state["clear_input"] = True
+    st.rerun()
 
 # Reset the clear flag after processing
 if st.session_state.get("clear_input", False):
