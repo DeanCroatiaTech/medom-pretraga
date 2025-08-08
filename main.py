@@ -134,6 +134,31 @@ header {visibility: hidden;}
     color: #999999;
 }
 
+/* Submit button styling */
+.stButton > button {
+    border-radius: 12px;
+    border: 2px solid #000000;
+    padding: 16px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    background: #000000;
+    color: #ffffff;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    height: 56px;
+    min-width: 100px;
+}
+
+.stButton > button:hover {
+    background: #333333;
+    border-color: #333333;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.stButton > button:active {
+    transform: translateY(1px);
+}
+
 /* Spinner styling */
 .stSpinner > div {
     border-color: #000000 !important;
@@ -236,36 +261,47 @@ st.markdown('</div>', unsafe_allow_html=True)
 st.markdown('<div class="floating-input">', unsafe_allow_html=True)
 st.markdown('<div class="input-container">', unsafe_allow_html=True)
 
-# Use a unique key that changes when we want to clear the input
-input_key = f"floating_prompt_{st.session_state.get('input_counter', 0)}"
-prompt = st.text_input("", placeholder="Traži...", key=input_key, label_visibility="collapsed")
+# Create columns for input and button
+col1, col2 = st.columns([4, 1])
+
+with col1:
+    # Use a unique key that changes when we want to clear the input
+    input_key = f"floating_prompt_{st.session_state.get('input_counter', 0)}"
+    prompt = st.text_input("", placeholder="Traži...", key=input_key, label_visibility="collapsed")
+
+with col2:
+    submit_button = st.button("Pošalji", key=f"submit_{st.session_state.get('input_counter', 0)}")
 
 st.markdown('</div>', unsafe_allow_html=True)
 st.markdown('</div>', unsafe_allow_html=True)
 
 # Handle prompt submission
-if prompt and not st.session_state.get("clear_input", False):
-    with st.spinner("Razmišljam..."):
-        generated_response = run_llm(
-            query=prompt, chat_history=st.session_state["chat_history"]
-        )
-        sources = set(
-            [doc.metadata["source"] for doc in generated_response["source_documents"]]
-        )
+if (prompt and not st.session_state.get("clear_input", False)) or submit_button:
+    # Get the prompt from the input field
+    current_prompt = prompt if prompt else st.session_state.get("current_prompt", "")
 
-        formatted_response = (
-            f"{generated_response['result']}{create_individual_sources_string(sources)}"
-        )
+    if current_prompt and not st.session_state.get("clear_input", False):
+        with st.spinner("Razmišljam..."):
+            generated_response = run_llm(
+                query=current_prompt, chat_history=st.session_state["chat_history"]
+            )
+            sources = set(
+                [doc.metadata["source"] for doc in generated_response["source_documents"]]
+            )
 
-        st.session_state["user_prompt_history"].append(prompt)
-        st.session_state["chat_answers_history"].append(formatted_response)
-        st.session_state["chat_history"].append(("human", prompt))
-        st.session_state["chat_history"].append(("ai", generated_response["result"]))
+            formatted_response = (
+                f"{generated_response['result']}{create_individual_sources_string(sources)}"
+            )
 
-    # Clear the input by incrementing the counter
-    st.session_state["input_counter"] = st.session_state.get("input_counter", 0) + 1
-    st.session_state["clear_input"] = True
-    st.rerun()
+            st.session_state["user_prompt_history"].append(current_prompt)
+            st.session_state["chat_answers_history"].append(formatted_response)
+            st.session_state["chat_history"].append(("human", current_prompt))
+            st.session_state["chat_history"].append(("ai", generated_response["result"]))
+
+        # Clear the input by incrementing the counter
+        st.session_state["input_counter"] = st.session_state.get("input_counter", 0) + 1
+        st.session_state["clear_input"] = True
+        st.rerun()
 
 # Reset the clear flag after processing
 if st.session_state.get("clear_input", False):
