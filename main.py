@@ -212,6 +212,15 @@ header {visibility: hidden;}
 /* Language radio in header */
 .header-container [data-testid="stRadio"] label {
     font-size: 14px !important;
+    color: #000000 !important;
+    opacity: 1 !important;
+    font-weight: 700 !important;
+}
+.header-container [data-testid="stRadio"] label span,
+.header-container [data-testid="stRadio"] label div,
+.header-container [data-testid="stRadio"] label p {
+    color: #000000 !important;
+    opacity: 1 !important;
 }
 .header-container [data-testid="stRadio"] div[role="radiogroup"] {
     display: flex;
@@ -244,6 +253,15 @@ header {visibility: hidden;}
     }
         .header-container [data-testid="stRadio"] label {
             font-size: 13px !important;
+            color: #000000 !important;
+            opacity: 1 !important;
+            font-weight: 700 !important;
+        }
+        .header-container [data-testid="stRadio"] label span,
+        .header-container [data-testid="stRadio"] label div,
+        .header-container [data-testid="stRadio"] label p {
+            color: #000000 !important;
+            opacity: 1 !important;
         }
     .stButton > button {
         padding: 8px 12px;
@@ -301,7 +319,8 @@ st.markdown('<div class="main-container">', unsafe_allow_html=True)
 
 # Header with language switcher
 st.markdown('<div class="header-container">', unsafe_allow_html=True)
-header_left, header_right = st.columns([5, 3])
+# Use container width to avoid truncation on mobile
+header_left, header_right = st.columns([0.65, 0.35])
 with header_left:
     st.markdown(
         f"""
