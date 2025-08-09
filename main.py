@@ -227,6 +227,38 @@ header {visibility: hidden;}
     gap: 8px;
 }
 
+/* Language dropdown width in header */
+.header-container [data-testid="stSelectbox"] {
+    width: 40px !important;
+    min-width: 40px !important;
+    max-width: 40px !important;
+}
+.header-container [data-testid="stSelectbox"] > div,
+.header-container [data-baseweb="select"],
+.header-container [data-baseweb="select"] > div,
+.header-container [data-baseweb="select"] div[role="combobox"] {
+    width: 40px !important;
+    min-width: 40px !important;
+    max-width: 40px !important;
+    font-size: 12px !important;
+    overflow: hidden !important;
+    white-space: nowrap !important;
+}
+.header-container [data-baseweb="select"] div {
+    padding: 2px 4px !important;
+}
+/* Hide caret icon and center value for minimal look */
+.header-container [data-baseweb="select"] svg { 
+    display: none !important; 
+}
+.header-container [data-baseweb="select"] div[role="combobox"] { 
+    padding-right: 0 !important; 
+    justify-content: center !important; 
+}
+.header-container [data-baseweb="select"] div[role="combobox"] > div { 
+    flex: 0 0 auto !important; 
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
     .main-container {
@@ -269,6 +301,26 @@ header {visibility: hidden;}
         height: 40px;
         min-width: 80px;
     }
+        /* Narrower dropdown on mobile */
+        .header-container [data-testid="stSelectbox"],
+        .header-container [data-testid="stSelectbox"] > div,
+        .header-container [data-baseweb="select"],
+        .header-container [data-baseweb="select"] > div,
+        .header-container [data-baseweb="select"] div[role="combobox"] {
+            width: 40px !important;
+            min-width: 40px !important;
+            max-width: 40px !important;
+            font-size: 12px !important;
+            overflow: hidden !important;
+            white-space: nowrap !important;
+        }
+        .header-container [data-baseweb="select"] svg { 
+            display: none !important; 
+        }
+        .header-container [data-baseweb="select"] div[role="combobox"] { 
+            padding-right: 0 !important; 
+            justify-content: center !important; 
+        }
 }
 </style>
 """, unsafe_allow_html=True)
@@ -320,7 +372,7 @@ st.markdown('<div class="main-container">', unsafe_allow_html=True)
 # Header with language switcher
 st.markdown('<div class="header-container">', unsafe_allow_html=True)
 # Use container width to avoid truncation on mobile
-header_left, header_right = st.columns([0.65, 0.35])
+header_left, header_right = st.columns([0.78, 0.22])
 with header_left:
     st.markdown(
         f"""
@@ -330,16 +382,15 @@ with header_left:
         unsafe_allow_html=True,
     )
 with header_right:
-    # Mobile-friendly radio
-    selected_flag = st.radio(
-        label="Language",
+    # Dropdown language selector with short labels
+    selected_lang = st.selectbox(
+        label="Lang",
         options=["HR", "EN"],
         index=0 if st.session_state["lang"] == "hr" else 1,
-        horizontal=True,
         label_visibility="collapsed",
-        key="lang_switcher_radio",
+        key="lang_switcher_select",
     )
-    new_lang = "hr" if selected_flag == "HR" else "en"
+    new_lang = "hr" if selected_lang == "HR" else "en"
     if new_lang != st.session_state["lang"]:
         st.session_state["lang"] = new_lang
         st.rerun()
