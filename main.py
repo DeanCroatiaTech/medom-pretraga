@@ -160,15 +160,15 @@ header {visibility: hidden;}
 .stButton > button {
     border-radius: 12px;
     border: 2px solid #000000;
-    padding: 16px 24px;
-    font-size: 16px;
+    padding: 8px 14px;
+    font-size: 14px;
     font-weight: 600;
     background: #000000;
     color: #ffffff;
     transition: all 0.2s ease;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    height: 56px;
-    min-width: 100px;
+    height: 40px;
+    min-width: 80px;
 }
 
 .stButton > button:hover {
@@ -209,6 +209,15 @@ header {visibility: hidden;}
     margin-top: 10px !important;
 }
 
+/* Language radio in header */
+.header-container [data-testid="stRadio"] label {
+    font-size: 14px !important;
+}
+.header-container [data-testid="stRadio"] div[role="radiogroup"] {
+    display: flex;
+    gap: 8px;
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
     .main-container {
@@ -232,6 +241,15 @@ header {visibility: hidden;}
     .stTextInput > div > div > input {
         padding: 14px 20px;
         font-size: 15px;
+    }
+        .header-container [data-testid="stRadio"] label {
+            font-size: 13px !important;
+        }
+    .stButton > button {
+        padding: 8px 12px;
+        font-size: 14px;
+        height: 40px;
+        min-width: 80px;
     }
 }
 </style>
@@ -283,7 +301,7 @@ st.markdown('<div class="main-container">', unsafe_allow_html=True)
 
 # Header with language switcher
 st.markdown('<div class="header-container">', unsafe_allow_html=True)
-header_left, header_right = st.columns([6, 2])
+header_left, header_right = st.columns([5, 3])
 with header_left:
     st.markdown(
         f"""
@@ -293,14 +311,14 @@ with header_left:
         unsafe_allow_html=True,
     )
 with header_right:
-    # Flag radio toggle
+    # Mobile-friendly radio
     selected_flag = st.radio(
         label="Language",
         options=["HR", "EN"],
         index=0 if st.session_state["lang"] == "hr" else 1,
         horizontal=True,
         label_visibility="collapsed",
-        key="lang_switcher",
+        key="lang_switcher_radio",
     )
     new_lang = "hr" if selected_flag == "HR" else "en"
     if new_lang != st.session_state["lang"]:
