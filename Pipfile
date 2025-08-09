@@ -27,6 +27,7 @@ langchain-chroma = "*"
 python-dotenv = "*"
 langchain-tavily = "*"
 streamlit = "*"
+langdetect = "*"
 
 [dev-packages]
 ipykernel = "*"

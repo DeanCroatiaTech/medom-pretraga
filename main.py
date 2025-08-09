@@ -212,14 +212,14 @@ header {visibility: hidden;}
 /* Language radio in header */
 .header-container [data-testid="stRadio"] label {
     font-size: 14px !important;
-    color: #000000 !important;
+    color: #6b7280 !important; /* gray-500 */
     opacity: 1 !important;
-    font-weight: 700 !important;
+    font-weight: 600 !important;
 }
 .header-container [data-testid="stRadio"] label span,
 .header-container [data-testid="stRadio"] label div,
 .header-container [data-testid="stRadio"] label p {
-    color: #000000 !important;
+    color: #6b7280 !important;
     opacity: 1 !important;
 }
 .header-container [data-testid="stRadio"] div[role="radiogroup"] {
@@ -227,26 +227,6 @@ header {visibility: hidden;}
     gap: 8px;
 }
 
-/* Language dropdown width in header */
-.header-container [data-testid="stSelectbox"] {
-    width: 40px !important;
-    min-width: 40px !important;
-    max-width: 40px !important;
-}
-.header-container [data-testid="stSelectbox"] > div,
-.header-container [data-baseweb="select"],
-.header-container [data-baseweb="select"] > div,
-.header-container [data-baseweb="select"] div[role="combobox"] {
-    width: 40px !important;
-    min-width: 40px !important;
-    max-width: 40px !important;
-    font-size: 12px !important;
-    overflow: hidden !important;
-    white-space: nowrap !important;
-}
-.header-container [data-baseweb="select"] div {
-    padding: 2px 4px !important;
-}
 /* Hide caret icon and center value for minimal look */
 .header-container [data-baseweb="select"] svg { 
     display: none !important; 
@@ -285,14 +265,14 @@ header {visibility: hidden;}
     }
         .header-container [data-testid="stRadio"] label {
             font-size: 13px !important;
-            color: #000000 !important;
+            color: #6b7280 !important; /* gray-500 */
             opacity: 1 !important;
-            font-weight: 700 !important;
+            font-weight: 600 !important;
         }
         .header-container [data-testid="stRadio"] label span,
         .header-container [data-testid="stRadio"] label div,
         .header-container [data-testid="stRadio"] label p {
-            color: #000000 !important;
+            color: #6b7280 !important;
             opacity: 1 !important;
         }
     .stButton > button {
@@ -301,19 +281,7 @@ header {visibility: hidden;}
         height: 40px;
         min-width: 80px;
     }
-        /* Narrower dropdown on mobile */
-        .header-container [data-testid="stSelectbox"],
-        .header-container [data-testid="stSelectbox"] > div,
-        .header-container [data-baseweb="select"],
-        .header-container [data-baseweb="select"] > div,
-        .header-container [data-baseweb="select"] div[role="combobox"] {
-            width: 40px !important;
-            min-width: 40px !important;
-            max-width: 40px !important;
-            font-size: 12px !important;
-            overflow: hidden !important;
-            white-space: nowrap !important;
-        }
+        
         .header-container [data-baseweb="select"] svg { 
             display: none !important; 
         }
@@ -382,13 +350,14 @@ with header_left:
         unsafe_allow_html=True,
     )
 with header_right:
-    # Dropdown language selector with short labels
-    selected_lang = st.selectbox(
-        label="Lang",
+    # Radio language selector
+    selected_lang = st.radio(
+        label="Language",
         options=["HR", "EN"],
         index=0 if st.session_state["lang"] == "hr" else 1,
+        horizontal=True,
         label_visibility="collapsed",
-        key="lang_switcher_select",
+        key="lang_switcher_radio",
     )
     new_lang = "hr" if selected_lang == "HR" else "en"
     if new_lang != st.session_state["lang"]:
