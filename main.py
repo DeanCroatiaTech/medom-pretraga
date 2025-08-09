@@ -212,14 +212,14 @@ header {visibility: hidden;}
 /* Language radio in header */
 .header-container [data-testid="stRadio"] label {
     font-size: 14px !important;
-    color: #6b7280 !important; /* gray-500 */
+    color: #EFEFEF !important;
     opacity: 1 !important;
     font-weight: 600 !important;
 }
 .header-container [data-testid="stRadio"] label span,
 .header-container [data-testid="stRadio"] label div,
 .header-container [data-testid="stRadio"] label p {
-    color: #6b7280 !important;
+    color: #EFEFEF !important;
     opacity: 1 !important;
 }
 .header-container [data-testid="stRadio"] div[role="radiogroup"] {
@@ -265,14 +265,14 @@ header {visibility: hidden;}
     }
         .header-container [data-testid="stRadio"] label {
             font-size: 13px !important;
-            color: #6b7280 !important; /* gray-500 */
+            color: #EFEFEF !important;
             opacity: 1 !important;
             font-weight: 600 !important;
         }
         .header-container [data-testid="stRadio"] label span,
         .header-container [data-testid="stRadio"] label div,
         .header-container [data-testid="stRadio"] label p {
-            color: #6b7280 !important;
+            color: #EFEFEF !important;
             opacity: 1 !important;
         }
     .stButton > button {
