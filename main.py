@@ -11,6 +11,28 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
+# Initialize language in session state
+if "lang" not in st.session_state:
+    st.session_state["lang"] = "hr"  # 'hr' or 'en'
+
+# Simple translation dictionary for UI strings
+TRANSLATIONS = {
+    "hr": {
+        "subtitle": "Vaš AI-asistent za nekretnine",
+        "search_placeholder": "Traži...",
+        "send": "Pošalji",
+        "thinking": "Razmišljam...",
+        "sources": "Izvori",
+    },
+    "en": {
+        "subtitle": "Your AI real estate assistant",
+        "search_placeholder": "Search...",
+        "send": "Send",
+        "thinking": "Thinking...",
+        "sources": "Sources",
+    },
+}
+
 # Custom CSS for black and white minimalist design
 st.markdown("""
 <style>
@@ -233,9 +255,11 @@ if "clear_input" not in st.session_state:
 def create_sources_string(source_urls: Set[str]) -> str:
     if not source_urls:
         return ""
+    lang = st.session_state.get("lang", "hr")
+    label = TRANSLATIONS[lang]["sources"]
     sources_list = list(source_urls)
     sources_list.sort()
-    sources_string = "**Izvori:**\n"
+    sources_string = f"**{label}:**\n"
     for i, source in enumerate(sources_list):
         sources_string += f"{i + 1}. {source}\n"
     return sources_string
@@ -244,9 +268,11 @@ def create_sources_string(source_urls: Set[str]) -> str:
 def create_individual_sources_string(source_urls: Set[str]) -> str:
     if not source_urls:
         return ""
+    lang = st.session_state.get("lang", "hr")
+    label = TRANSLATIONS[lang]["sources"]
     sources_list = list(source_urls)
     sources_list.sort()
-    sources_string = "\n\n**Izvori:**\n"
+    sources_string = f"\n\n**{label}:**\n"
     for i, source in enumerate(sources_list):
         sources_string += f"{i + 1}. {source}\n"
     return sources_string
@@ -255,13 +281,32 @@ def create_individual_sources_string(source_urls: Set[str]) -> str:
 # Main container
 st.markdown('<div class="main-container">', unsafe_allow_html=True)
 
-# Header
-st.markdown("""
-<div class="header-container">
-    <div class="header-title">MeDom Nekretnine</div>
-    <div class="header-subtitle">Vaš AI-asistent za nekretnine</div>
-</div>
-""", unsafe_allow_html=True)
+# Header with language switcher
+st.markdown('<div class="header-container">', unsafe_allow_html=True)
+header_left, header_right = st.columns([6, 2])
+with header_left:
+    st.markdown(
+        f"""
+        <div class="header-title">MeDom Nekretnine</div>
+        <div class="header-subtitle">{TRANSLATIONS[st.session_state['lang']]['subtitle']}</div>
+        """,
+        unsafe_allow_html=True,
+    )
+with header_right:
+    # Flag radio toggle
+    selected_flag = st.radio(
+        label="Language",
+        options=["HR", "EN"],
+        index=0 if st.session_state["lang"] == "hr" else 1,
+        horizontal=True,
+        label_visibility="collapsed",
+        key="lang_switcher",
+    )
+    new_lang = "hr" if selected_flag == "HR" else "en"
+    if new_lang != st.session_state["lang"]:
+        st.session_state["lang"] = new_lang
+        st.rerun()
+st.markdown('</div>', unsafe_allow_html=True)
 
 # Chat container
 st.markdown('<div class="chat-container">', unsafe_allow_html=True)
@@ -290,10 +335,18 @@ col1, col2 = st.columns([4, 1])
 with col1:
     # Use a unique key that changes when we want to clear the input
     input_key = f"floating_prompt_{st.session_state.get('input_counter', 0)}"
-    prompt = st.text_input("", placeholder="Traži...", key=input_key, label_visibility="collapsed")
+    prompt = st.text_input(
+        "",
+        placeholder=TRANSLATIONS[st.session_state["lang"]]["search_placeholder"],
+        key=input_key,
+        label_visibility="collapsed",
+    )
 
 with col2:
-    submit_button = st.button("Pošalji", key=f"submit_{st.session_state.get('input_counter', 0)}")
+    submit_button = st.button(
+        TRANSLATIONS[st.session_state["lang"]]["send"],
+        key=f"submit_{st.session_state.get('input_counter', 0)}",
+    )
 
 st.markdown('</div>', unsafe_allow_html=True)
 st.markdown('</div>', unsafe_allow_html=True)
@@ -305,7 +358,7 @@ if (prompt and not st.session_state.get("clear_input", False)) or submit_button:
 
     if current_prompt and not st.session_state.get("clear_input", False):
         # Show custom loading indicator for mobile
-        st.markdown("""
+        st.markdown(f"""
         <div style="
             display: flex;
             justify-content: center;
@@ -330,13 +383,13 @@ if (prompt and not st.session_state.get("clear_input", False)) or submit_button:
                 color: #000000;
                 font-weight: 600;
                 font-size: 18px;
-            ">Razmišljam...</div>
+            ">{TRANSLATIONS[st.session_state['lang']]['thinking']}</div>
         </div>
         <style>
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+        @keyframes spin {{
+            0% {{ transform: rotate(0deg); }}
+            100% {{ transform: rotate(360deg); }}
+        }}
         </style>
         """, unsafe_allow_html=True)
 

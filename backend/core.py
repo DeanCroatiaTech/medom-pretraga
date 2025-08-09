@@ -36,13 +36,14 @@ def run_llm(query: str, chat_history: List[Dict[str, Any]]):
     </context>
 
     if the answer is not provided in the context say "Answer not in context"
+    if question is in english answer in english, if question is in croatian answer in croatian
     Question:
     {input}
     """
     retrieval_qa_chat_prompt2 = PromptTemplate.from_template(template=template)
 
     stuff_documents_chain = create_stuff_documents_chain(
-        chat, retrieval_qa_chat_prompt
+        chat, retrieval_qa_chat_prompt2
     )
 
     history_aware_retriever = create_history_aware_retriever(
