@@ -5,7 +5,7 @@ from langchain.chains.history_aware_retriever import create_history_aware_retrie
 from langchain.chains.retrieval import create_retrieval_chain
 from langchain_community.llms.ollama import Ollama
 from langchain_core.prompts import PromptTemplate
-from langdetect import detect
+from langdetect import detect, DetectorFactory
 
 load_dotenv()
 
@@ -17,12 +17,14 @@ from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 
 INDEX_NAME = "langchain-doc-index"
 
+DetectorFactory.seed = 0
+
 
 
 def run_llm(query: str, chat_history: List[Dict[str, Any]] = []):
     embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
     docsearch = PineconeVectorStore(index_name=INDEX_NAME, embedding=embeddings)
-    chat = ChatOpenAI(verbose=True, temperature=0, model="gpt-4o")
+    chat = ChatOpenAI(verbose=True, temperature=0, model="gpt-3.5-turbo")
 
     rephrase_prompt = hub.pull("langchain-ai/chat-langchain-rephrase")
     retrieval_qa_chat_prompt = hub.pull("langchain-ai/retrieval-qa-chat")
@@ -37,7 +39,7 @@ def run_llm(query: str, chat_history: List[Dict[str, Any]] = []):
     )
 
     lang = detect(query)
-    query += query + ", answer in " + lang
+    query = query + ", answer in " + lang
 
     result = qa.invoke(input={"input": query, "chat_history": chat_history})
     new_result = {
