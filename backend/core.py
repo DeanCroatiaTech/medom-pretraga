@@ -20,7 +20,6 @@ INDEX_NAME = "langchain-doc-index"
 DetectorFactory.seed = 0
 
 
-
 def run_llm(query: str, chat_history: List[Dict[str, Any]] = []):
     embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
     docsearch = PineconeVectorStore(index_name=INDEX_NAME, embedding=embeddings)
@@ -39,7 +38,7 @@ def run_llm(query: str, chat_history: List[Dict[str, Any]] = []):
     )
 
     lang = detect(query)
-    query = query + ", answer in " + lang
+    query = query + ", answer in " + lang + ", don't show details url"
 
     result = qa.invoke(input={"input": query, "chat_history": chat_history})
     new_result = {
