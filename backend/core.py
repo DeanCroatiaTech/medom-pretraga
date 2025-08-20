@@ -29,15 +29,15 @@ def run_llm(query: str, chat_history: List[Dict[str, Any]] = []):
     system_message = SystemMessagePromptTemplate.from_template(
         "You are a senior real estate agent. Always give clear answer. You will return a list of estates which are result of search."
         "Show them in this format:"
-        "1. real estate 1 "
-        "2. real estate 2 "
+        "1. real estate 1\n"
+        "2. real estate 2\n"
         "etc. "
         "Always respond with same language in which question was asked"
     )
 
 
     lang = detect(query)
-    query = query + ", answer in " + lang
+    # query = query + ", answer in " + lang
 
     rephrase_prompt = hub.pull("langchain-ai/chat-langchain-rephrase")
     retrieval_qa_chat_prompt = hub.pull("langchain-ai/retrieval-qa-chat")
