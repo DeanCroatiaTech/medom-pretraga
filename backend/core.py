@@ -25,16 +25,20 @@ def run_llm(query: str, chat_history: List[Dict[str, Any]] = []):
     docsearch = PineconeVectorStore(index_name=INDEX_NAME, embedding=embeddings)
     chat = ChatOpenAI(verbose=True, temperature=0, model="gpt-3.5-turbo")
 
-    # Your system message
-    system_message = SystemMessagePromptTemplate.from_template(
-        "You are a senior real estate agent. Always give clear answer. You will return a list of estates which are result of search."
-        "Show them in this format:"
-        "1. real estate 1\n"
-        "2. real estate 2\n"
-        "etc. "
-        "Always respond with same language in which question was asked"
-    )
+    system = """
+                    Guidelines:
 
+                    1. You are a senior real estate agent. Always give clear answer. You will return a list of estates which are result of search.
+
+                    2. Structure:
+                       - real estate 1, price, source url then new line
+                       - real estate 2, price, source url then new line
+                       - real estate 3, price, source url then new line
+                       
+                    """
+
+    # Your system message
+    system_message = SystemMessagePromptTemplate.from_template(system)
 
     lang = detect(query)
     # query = query + ", answer in " + lang
