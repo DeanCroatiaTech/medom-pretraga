@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from langchain.chains.history_aware_retriever import create_history_aware_retriever
 from langchain.chains.retrieval import create_retrieval_chain
 from langchain_community.llms.ollama import Ollama
-from langchain_core.prompts import PromptTemplate
+from langchain_core.prompts import PromptTemplate, SystemMessagePromptTemplate, ChatPromptTemplate
 from langdetect import detect, DetectorFactory
 
 load_dotenv()
@@ -25,8 +25,27 @@ def run_llm(query: str, chat_history: List[Dict[str, Any]] = []):
     docsearch = PineconeVectorStore(index_name=INDEX_NAME, embedding=embeddings)
     chat = ChatOpenAI(verbose=True, temperature=0, model="gpt-3.5-turbo")
 
+    # Your system message
+    system_message = SystemMessagePromptTemplate.from_template(
+        "You are a senior real estate agent. Always give clear answer. You will return a list of estates which are result of search."
+        "Show them in this format:"
+        "1. real estate 1 "
+        "2. real estate 2 "
+        "etc. "
+        "Always respond with same language in which question was asked"
+    )
+
+
+    lang = detect(query)
+    query = query + ", answer in " + lang
+
     rephrase_prompt = hub.pull("langchain-ai/chat-langchain-rephrase")
     retrieval_qa_chat_prompt = hub.pull("langchain-ai/retrieval-qa-chat")
+
+    retrieval_qa_chat_prompt = ChatPromptTemplate.from_messages([
+        system_message,
+        *retrieval_qa_chat_prompt.messages
+    ])
     
     stuff_documents_chain = create_stuff_documents_chain(chat, retrieval_qa_chat_prompt)
 
@@ -37,8 +56,7 @@ def run_llm(query: str, chat_history: List[Dict[str, Any]] = []):
         retriever=history_aware_retriever, combine_docs_chain=stuff_documents_chain
     )
 
-    lang = detect(query)
-    query = query + ", answer in " + lang
+
 
     result = qa.invoke(input={"input": query, "chat_history": chat_history})
     new_result = {
