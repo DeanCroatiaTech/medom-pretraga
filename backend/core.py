@@ -31,9 +31,11 @@ def run_llm(query: str, chat_history: List[Dict[str, Any]] = []):
                     1. You are a senior real estate agent. Always give clear answer. You will return a list of estates which are result of search.
 
                     2. Structure:
-                       - real estate 1, price, source url then new line
-                       - real estate 2, price, source url then new line
-                       - real estate 3, price, source url then new line
+                        
+                    Here is the list :
+                       - real estate 1, price, real estate source url, then new line
+                       - real estate 2, price, real estate source url, then new line
+                       - real estate 3, price, real estate source url, then new line
                        
                     """
 
